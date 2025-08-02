@@ -1,0 +1,19 @@
+{
+  "PORT": "4000",
+  "databaseSettings": {
+    "mongo":  {
+      "host"      : "13.235.159.112",
+      "port"      : "27017",
+      "user"      : "aikka_dev",
+      "password"  : "f8aKyZ2vqRhgwoe",
+      "database"  : "aikka_dev",
+      "url"       : "mongodb+srv://Trackcivic:civicTrack@!#321@cluster0.ytwvmol.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    },
+    "redis": {
+      "host"      : "13.235.159.112",
+      "port"      : "6379",
+      "password"  : "QZIauYXERXW0jc428GFsBEvgnqc78tH5SoDJJSCnEno+gFgMkqjhlQ==",
+      "prefix"    : "DEV-"
+    }
+  }
+}
