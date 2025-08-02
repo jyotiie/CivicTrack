@@ -17,12 +17,14 @@ const CivicReportSchema = new mongoose.Schema({
         trim: true
     },
     location: {
-        latitude: {
-            type: Number,
-            required: true
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true,
+            default: 'Point'
         },
-        longitude: {
-            type: Number,
+        coordinates: {
+            type: [Number], // [longitude, latitude]
             required: true
         }
     },
@@ -39,9 +41,23 @@ const CivicReportSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    history: [
+        {
+            date: {
+                type: Date,
+                default: Date.now
+            },
+            status: {
+                type: String,
+                enum: ['pending', 'in_progress', 'resolved', 'rejected'],
+                required: true
+            }
+        }
+    ]
 }, {
     timestamps: true
 });
-
+// Create a 2dsphere index for geospatial queries
+CivicReportSchema.index({ location: '2dsphere' });
 module.exports = mongoose.model('CivicReport', CivicReportSchema);

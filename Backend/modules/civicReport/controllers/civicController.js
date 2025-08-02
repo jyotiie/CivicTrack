@@ -60,36 +60,15 @@ exports.deleteReport = async (req, res) => {
 };
 
 
-exports.getReportsWithinRadius = async (req, res , area) => {
+exports.getReportsWithinRadius = async (req, res) => {
     try {
-        const { latitude, longitude } = req.query;
-        if (!latitude || !longitude) {
-            return res.status(400).json({ message: 'Latitude and longitude are required' });
+        const { area, latitude, longitude } = req.query;
+        if (!area || !latitude || !longitude) {
+            return res.status(400).json({ message: 'Missing required query parameters: area, latitude, longitude' });
         }
-
-        const reports = await civicReportService.getAllReports();
-        const toRad = (value) => (value * Math.PI) / 180;
-        const earthRadiusKm = 6371;
-
-        const filteredReports = reports.filter(report => {
-            if (!report.location || typeof report.location.latitude !== 'number' || typeof report.location.longitude !== 'number') {
-                return false;
-            }
-            const dLat = toRad(report.location.latitude - parseFloat(latitude));
-            const dLon = toRad(report.location.longitude - parseFloat(longitude));
-            const lat1 = toRad(parseFloat(latitude));
-            const lat2 = toRad(report.location.latitude);
-
-            const a =
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const distance = earthRadiusKm * c;
-
-            return distance <= area;
-        });
-
-        res.status(200).json(filteredReports);
+        const radiusInMeters = area * 1000; // Convert area to meters
+        const reports = await civicReportService.getReportsWithinRadius(radiusInMeters, latitude, longitude);
+        res.status(200).json(reports);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching reports within radius', error });
     }

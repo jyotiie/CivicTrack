@@ -25,6 +25,7 @@ exports.register = async (req, res, next) => {
     }).required(),
     imageUrl: Joi.string().uri().optional().allow(''),
     status: Joi.string().valid('pending', 'in_progress', 'resolved', 'rejected').optional(),
+    history: Joi.array().items(Joi.string()).optional(),
     createdBy: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required()
   });
 
