@@ -17,6 +17,11 @@ const UserHomePage = () => {
   const [editingIssue, setEditingIssue] = useState(null);
 
   useEffect(() => {
+    const images = [
+      "/street-light.jpg",
+      "/pothole.jpg",
+      "/Garbage.jpg"
+    ];
     const fetchReports = async () => {
       setLoading(true);
       setError("");
@@ -25,9 +30,9 @@ const UserHomePage = () => {
         if (!res.ok) throw new Error("Failed to fetch reports");
         const data = await res.json();
         // Map backend schema to IssueCard format
-        const mapped = data.map((r) => ({
+        const mapped = data.map((r, idx) => ({
           id: r._id,
-          image: r.imageUrl,
+          image: images[idx % images.length],
           category: r.category,
           status: r.status,
           date: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "",

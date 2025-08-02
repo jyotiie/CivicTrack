@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const RegisterPage = () => {
@@ -11,6 +11,7 @@ const RegisterPage = () => {
   });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // ✅ for redirecting
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,8 +35,9 @@ const RegisterPage = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage("Registration successful! Please login.");
-        setForm({ name: "", phone: "", email: "", password: "" });
+        setMessage("Registration successful!");
+        localStorage.setItem("isLoggedIn", "true"); // ✅ login status
+        navigate("/"); // ✅ redirect to homepage
       } else {
         setMessage(data.message || "Registration failed");
       }
@@ -45,6 +47,7 @@ const RegisterPage = () => {
       setLoading(false);
     }
   };
+
   return (
     <div>
       <Navbar />

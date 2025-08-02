@@ -1,11 +1,12 @@
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,16 +17,19 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+
     try {
       const res = await fetch("https://civictrack-qc7g.onrender.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: form.email, password: form.password }),
       });
+
       const data = await res.json();
       if (res.ok) {
+        localStorage.setItem("isLoggedIn", "true"); // ✅ store login
         setMessage("Login successful!");
-        // Optionally, redirect or store token here
+        navigate("/"); // ✅ redirect to homepage
       } else {
         setMessage(data.message || "Login failed");
       }

@@ -2,61 +2,62 @@ import Navbar from "../components/Navbar";
 import Filters from "../components/Filters";
 import IssueCard from "../components/IssueCard";
 import Pagination from "../components/Pagination";
-import { useState } from "react";
-
-const sampleIssues = [
-  {
-    image: "/street-light.jpg",
-    category: "Streetlight",
-    status: "In Progress",
-    date: "Aug 14",
-    title: "Streetlight not working",
-    description: "Street light not working since last 2 days",
-    location: "Gota bridge, Ahmedabad",
-    distance: 2.8,
-  },
-  {
-    image: "/pothole.jpg",
-    category: "Road",
-    status: "Reported",
-    date: "Jun 02",
-    title: "Pothole on main road",
-    description: "The main road is riddled with potholes.",
-    location: "C.G road, Ahmedabad",
-    distance: 1.1,
-  },
-  {
-    image: "/Garbage.jpg",
-    category: "Garbage Collection",
-    status: "",
-    date: "Jun 25",
-    title: "Garbage not collected",
-    description: "Garbage is not collected since week.",
-    location: "IT society, Ahmedabad",
-    distance: 1.1,
-  },
-  // Add more sample issues if needed
-];
+import { useState, useEffect } from "react";
 
 const HomePage = () => {
+  const [issues, setIssues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
   const [distance, setDistance] = useState("");
 
-  const filteredIssues = sampleIssues.filter((issue) => {
-    const matchesQuery = issue.title.toLowerCase().includes(query.toLowerCase());
+  useEffect(() => {
+    const images = [
+      "/street-light.jpg",
+      "/pothole.jpg",
+      "/Garbage.jpg"
+    ];
+    const fetchIssues = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("https://civictrack-qc7g.onrender.com/v1/civic-reports");
+        if (!res.ok) throw new Error("Failed to fetch issues");
+        const data = await res.json();
+        const mapped = data.map((r, idx) => ({
+          image: images[idx % images.length],
+          category: r.category,
+          status: r.status,
+          date: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "",
+          title: r.subject,
+          description: r.description,
+          location: r.location && r.location.address ? r.location.address : "",
+          distance: r.location && r.location.distance ? r.location.distance : 0,
+          _id: r._id,
+        }));
+        setIssues(mapped);
+      } catch (err) {
+        setError(err.message || "Error loading issues");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchIssues();
+  }, []);
+
+  const filteredIssues = issues.filter((issue) => {
+    const matchesQuery = issue.title && issue.title.toLowerCase().includes(query.toLowerCase());
     const matchesCategory = category ? issue.category === category : true;
     const matchesStatus = status ? issue.status === status : true;
     const matchesDistance = distance ? issue.distance <= parseFloat(distance) : true;
-
     return matchesQuery && matchesCategory && matchesStatus && matchesDistance;
   });
 
   return (
     <div>
       <Navbar />
-
       {/* Filters section */}
       <div className="flex flex-wrap gap-4 p-4">
         <select
@@ -102,9 +103,13 @@ const HomePage = () => {
 
       {/* Issue cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-        {filteredIssues.length > 0 ? (
+        {loading ? (
+          <div className="text-center col-span-full text-gray-500">Loading issues...</div>
+        ) : error ? (
+          <div className="text-center col-span-full text-red-500">{error}</div>
+        ) : filteredIssues.length > 0 ? (
           filteredIssues.map((issue, idx) => (
-<IssueCard key={idx} issue={issue} onClick={() => {}} />
+            <IssueCard key={issue._id || idx} issue={issue} onClick={() => {}} />
           ))
         ) : (
           <p className="text-center col-span-full text-gray-500">No issues found.</p>
