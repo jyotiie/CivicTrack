@@ -1,18 +1,18 @@
-import { connectToDatabase } from './DB/connectDB.js';
-const express = require('express');
-const mongoose = require('mongoose');
+/**
+ * Created by Angad on 7th February 2023
+ */
 
-const app = express();
-const PORT = 4000;
+'use strict';
+require('newrelic');
 
-// Middleware
-app.use(express.json());
+process.env.NODE_CONFIG_DIR       = 'config/';
+const express                     = require('express');
+const router                      = express.Router();
+const app                         = express();
 
-// Database connection function
+global.app                        = app;
+global.router                     = router;
 
-
-// Start server and connect to database
-app.listen(PORT, async () => {
-    await connectToDatabase();
-    console.log(`Server running on port ${PORT}`);
-});
+require('./middlewares');
+require('./modules');
+require('./startup').initializeServer();
