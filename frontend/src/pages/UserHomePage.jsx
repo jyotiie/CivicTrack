@@ -1,45 +1,51 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // navigation
 import Navbar from "../components/Navbar";
 import Filters from "../components/Filters";
 import IssueCard from "../components/IssueCard";
-import { useState } from "react";
 import EditIssueModal from "../components/EditIssueModel";
 
-const sampleIssues = [
-  {
-    id: 1,
-    image: "/pothole.jpg",
-    category: "Road",
-    status: "In Progress",
-    date: "Aug 02, 2025",
-    title: "Pothole on main road",
-    description: "The road is damaged and difficult to travel on.",
-    location: "Sector 12",
-    distance: 2.5,
-  },
-  {
-    id: 2,
-    image: "/street-light.jpg",
-    category: "Streetlight",
-    status: "Resolved",
-    date: "Jul 29, 2025",
-    title: "Streetlight not working",
-    description: "Dark at night due to streetlight outage.",
-    location: "Sector 10",
-    distance: 1.2,
-  },
-];
-
 const UserHomePage = () => {
-  const [issues, setIssues] = useState(sampleIssues);
+  const [issues, setIssues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [tab, setTab] = useState("myIssues");
-
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
   const [distance, setDistance] = useState("");
-
   const [editingIssue, setEditingIssue] = useState(null);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("https://civictrack-qc7g.onrender.com/v1/civic-reports");
+        if (!res.ok) throw new Error("Failed to fetch reports");
+        const data = await res.json();
+        // Map backend schema to IssueCard format
+        const mapped = data.map((r) => ({
+          id: r._id,
+          image: r.imageUrl,
+          category: r.category,
+          status: r.status,
+          date: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "",
+          title: r.subject,
+          description: r.description,
+          location: r.location && r.location.address ? r.location.address : "",
+          distance: r.location && r.location.distance ? r.location.distance : 0,
+          raw: r, // keep original for edit modal if needed
+        }));
+        setIssues(mapped);
+      } catch (err) {
+        setError(err.message || "Error loading reports");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReports();
+  }, []);
 
   const handleQueryChange = (e) => setQuery(e.target.value);
   const handleCategoryChange = (e) => setCategory(e.target.value);
@@ -56,14 +62,12 @@ const UserHomePage = () => {
   const filteredIssues = issues.filter((issue) => {
     const matchesQuery =
       query === "" ||
-      issue.title.toLowerCase().includes(query.toLowerCase()) ||
-      issue.description.toLowerCase().includes(query.toLowerCase());
-
+      (issue.title && issue.title.toLowerCase().includes(query.toLowerCase())) ||
+      (issue.description && issue.description.toLowerCase().includes(query.toLowerCase()));
     const matchesCategory = category === "" || issue.category === category;
     const matchesStatus = status === "" || issue.status === status;
     const matchesDistance =
       distance === "" || issue.distance <= parseFloat(distance);
-
     return matchesQuery && matchesCategory && matchesStatus && matchesDistance;
   });
 
@@ -127,7 +131,11 @@ const UserHomePage = () => {
           />
         </div>
 
-        {tab === "myIssues" ? (
+        {loading ? (
+          <div className="text-center text-gray-500">Loading issues...</div>
+        ) : error ? (
+          <div className="text-center text-red-500">{error}</div>
+        ) : tab === "myIssues" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl w-full">
             {filteredIssues.length > 0 ? (
               filteredIssues.map((issue) => (
