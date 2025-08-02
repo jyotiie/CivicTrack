@@ -1,8 +1,7 @@
-/**
- * Created by Angad on 7th February 2023
- */
+
 'use strict';
 
+const c = require('config');
 const Joi               = require('joi');
 
 exports.requestMethods  = {
@@ -23,7 +22,8 @@ exports.responseHttpStatus = {
 };
 
 exports.modules  = {
-  ONBOARD           : "onboarding",
+  AUTH           : "auth",
+  CIVIC_REPORT   : "civicReport",
   APP_VERSION       : "app_version"
 };
 

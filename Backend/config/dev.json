@@ -7,7 +7,7 @@
       "user"      : "aikka_dev",
       "password"  : "f8aKyZ2vqRhgwoe",
       "database"  : "aikka_dev",
-      "url"       : "mongodb://aikka_dev:f8aKyZ2vqRhgwoe@13.235.159.112:27017/aikka_dev"
+      "url"       : "mongodb+srv://Trackcivic:civicTrack@!#321@cluster0.ytwvmol.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     },
     "redis": {
       "host"      : "13.235.159.112",
@@ -15,14 +15,5 @@
       "password"  : "QZIauYXERXW0jc428GFsBEvgnqc78tH5SoDJJSCnEno+gFgMkqjhlQ==",
       "prefix"    : "DEV-"
     }
-  },
-  "serviceUrls": {
-    "AUTH"          : "http://localhost:4000/",
-    "NOTIFICATION"  : "http://localhost:4002/",
-    "RESPONDENT"    : "http://localhost:4001/",
-    "SURVEY"        : "http://localhost:4004/",
-    "ROLES"         : "http://localhost:4003/"
-  },
-  "fe_url" : "https://dev.aikka.io/",
-  "microServiceAuthToken": "2i8STxuYTVqo8tCLJynhSRLpfnGG"
+  }
 }

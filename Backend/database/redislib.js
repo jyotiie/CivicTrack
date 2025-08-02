@@ -9,7 +9,7 @@ const logging           = require('../logging/logging');
 const dateUtility       = require('../utility/dateUtility');
 const dbProperties      = require('./dbProperties');
 
-let PREFIX              = dbProperties.redis.prefix;
+let PREFIX              = "kkk_"
 
 const initialize = (apiReference, config) => {
   const client = asyncRedis.createClient({

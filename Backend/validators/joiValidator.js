@@ -10,7 +10,7 @@ const logging                                     = require('./../logging/loggin
 const responses                                   = require('./../responses/responses');
 
 const headersStructure = Joi.object().keys({
-  'access-token'    : Joi.string().required()
+  'access-token'    : Joi.string().optional()
 });
 
 const joiValidate = async (apiReference, body, schema, options, res, msg)=>{

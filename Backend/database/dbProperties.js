@@ -8,7 +8,7 @@ const config                                      = require('config');
 
 exports.mongodb = {
   host        : process.env.MONGO_HOST      || config.get('databaseSettings.mongo.host'),
-  port        : process.env.MONGO_PORT      || config.get('databaseSettings.mongo.port'),
+  port        : process.env.MONGO_PORT      || config.get('databaseSettings.mongo.port') || 27017,
   user        : process.env.MONGO_USER      || config.get('databaseSettings.mongo.user'),
   password    : process.env.MONGO_PASS      || config.get('databaseSettings.mongo.password'),
   database    : process.env.MONGO_DATABASE  || config.get('databaseSettings.mongo.database'),

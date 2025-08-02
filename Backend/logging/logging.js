@@ -5,10 +5,11 @@
 'use strict';
 
 const moment                          = require('moment');
+const { register } = require('../modules/auth/validators/authValidator');
 
 const fileSwitches  = {
   startup       : true,
-  onboarding    : true,
+  auth    : true,
   app_version   : true
 };
 
@@ -16,23 +17,9 @@ const modules = {
   startup     : {
     initialize  : true
   },
-  onboarding  : {
-    register            : true,
-    login               : true,
-    logout              : true,
-    fetch               : true,
-    update              : true,
-    remove              : true,
-    loginViaAccessToken : true,
-    forgot_password     : true,
-    reset_password      : true,
-    sendOTP             : true,
-    loginViaOTP         : true,
-    simulatedLogin      : true,
-    createSimulatedLoginToken : true
-  },
-  app_version : {
-    get : true
+  auth : {
+    login : true,
+    register : true
   }
 };
 

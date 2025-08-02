@@ -5,7 +5,6 @@
 'use strict';
 
 require('./health');
-require('./onboard');
-require('./app_versions');
-
+require('./auth');
+require("./civicReport");
 app.use(process.env.PATH_ALIAS || '/', router);

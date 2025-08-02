@@ -36,9 +36,8 @@ exports.authenticateUser = async (req, res, next) => {
     return next();
   }
 
-  let userType = decodedToken.hasOwnProperty("bypassLogs") ? responseConstants.USER_TYPE.BACKDOOR_AGENT : decodedToken.user_type;
 
-  let tokenInRedis = await redisLib.get(apiReference, userType + "_" + decodedToken.user_id);
+  let tokenInRedis = await redisLib.get(apiReference, decodedToken.user_id);
   logging.log(apiReference, tokenInRedis);
   if (!tokenInRedis) {
     return responses.sessionExpired(res);
